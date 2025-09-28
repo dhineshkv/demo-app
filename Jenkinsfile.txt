@@ -51,6 +51,17 @@ pipeline {
                 sh 'mvn package'
             }
         }
+stage('SonarQube Analysis') {   // <-- ADD THIS HERE
+    steps {
+        withCredentials([string(credentialsId: 'sonar-token', variable: 'SONARQUBE_TOKEN')]) {
+            sh """
+                mvn sonar:sonar \
+                -Dsonar.host.url=http://localhost:9000 \
+                -Dsonar.login=$SONARQUBE_TOKEN
+            """
+        }
+    }
+}
 
         stage('Docker Cleanup') {
             steps {
